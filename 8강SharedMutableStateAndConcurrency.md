@@ -60,11 +60,17 @@ fun main() = runBlocking {
 }
 ```
 
-
+> 횟수가 너무 많아서 그런 것 같다. Dispatchers.Default를 써서 그런지. 여러개의 스레드가 있어서 volatile로 해결이 안된 것 같음. 동시성 문제도 있는 것 같음. 같은 스레드에서 동시성으로 인해서 하나의 job이 읽어서 올리려고 하는 그 사이에 올리기 전에 읽어버린 것 같다. 
+>
+> > 선형적인 읽기 쓰기가 가능하다 -> 읽는 시점은 알 수 있는데, 메인에 쓰는 시점을 알 수 없어서 좀 보장이 안될 수도 있다. 
+> >
+> > 쓰기에 대한 허점이 있는 것 같다. 
 
 ## Thread-safe data structures
 
 일반적인 해결법 중 하나로 thread-safe한 자료구조를 사용하는 방법이 있다. Thread-safe란, 동시에 최대 하나의 스레드만 변수에 접근할 수 있도록 자체적으로 제어하는 변수를 의미한다. 따라서 thread-safe한 변수를 사용하면 여러 개의 스레드가 동시에 접근해도 변수를 동기화할 수 있다. 예를들어 코틀린에는 `Int` 의 thread-safe타입인 `AtomicInteger`이 있다. `incrementAndGet`연산을 사용하면 `AtomicInteger`를 thread-safe하게 증가시킬 수 있다.
+
+> 내부 알고리즘 동작알고리즘이 compare and swap? 임 락을 안하는 방식이다. mutex나 lock을 하는게 안전한데 그걸 안하고 계속 비교를 해서 원래 알고있는 값이 맞는지?를 확인하기 때문에 빠르다. 비교하고 맞으면 내가 수정하겠다 방식임. 호출이 되는 순간에 값을 가지고 한다. 그럼 다음에 다시 시도한다. 
 
 ```kotlin
 val counter = AtomicInteger()
